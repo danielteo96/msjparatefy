@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🌙 Mensaje mágico para Tefy</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      overflow: hidden;
+    }
+    .envoltura {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+    }
+    .contenedor {
+      max-width: 600px;
+      text-align: center;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
+    .luna {
+      width: 100px;
+      height: 100px;
+      background: #fff2b3;
+      border-radius: 50%;
+      position: relative;
+      margin: 0 auto 30px;
+      box-shadow: 0 0 20px rgba(255, 255, 180, 0.4);
+    }
+    .luna::before {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: 15px;
+      width: 100%;
+      height: 100%;
+      background: #1b2735;
+      border-radius: 50%;
+    }
+    .mensaje {
+      font-size: 18px;
+      color: #ffd6eb;
+      margin-top: 30px;
+      padding: 0 20px;
+      max-width: 90%;
+      width: 100%;
+      text-align: center;
+      min-height: 100px;
+      line-height: 1.6;
+    }
+    .estrellas {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .estrella {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      animation: parpadeo 2s infinite ease-in-out alternate;
+    }
+    @keyframes parpadeo {
+      0% { opacity: 0.1; }
+      100% { opacity: 1; }
+    }
+    .typewriter {
+      display: inline-block;
+      overflow: hidden;
+      white-space: pre-wrap;
+      border-right: 2px solid #ffd6eb;
+      word-break: break-word;
+      animation: typing 4s steps(40, end), blink 0.75s step-end infinite;
+    }
+    @keyframes typing {
+      from { width: 0 }
+      to { width: 100% }
+    }
+    @keyframes blink {
+      50% { border-color: transparent }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 🎵 Música de fondo (local) -->
+  <audio id="musica" autoplay loop>
+    <source src="musica-romantica.mp3" type="audio/mpeg">
+    Tu navegador no soporta audio.
+  </audio>
+
+  <!-- ✨ Estrellas -->
+  <div class="estrellas" id="estrellas"></div>
+
+  <!-- 🌙 Contenido principal -->
+  <div class="envoltura">
+    <div class="contenedor">
+      <div class="luna"></div>
+      <h2>Mensaje para hoy, Tefy 🌙</h2>
+      <p class="mensaje"><span class="typewriter" id="mensaje"></span></p>
+      <button id="leerMensaje" style="margin-top: 20px; background-color: #ff69b4; border: none; padding: 10px 20px; border-radius: 10px; color: white; font-size: 16px; cursor: pointer;">
+        Leer mensaje del día 🌙
+      </button>
+    </div>
+  </div>
+
+  <!-- 🔊 Botón para pausar/reproducir música -->
+  <button id="musicaToggle"
+    style="position: fixed; bottom: 20px; right: 20px; background-color: rgba(255, 255, 255, 0.2); border: none; color: white; font-size: 24px; border-radius: 50%; width: 50px; height: 50px; cursor: pointer; z-index: 10;">
+    🔊
+  </button>
+
+  <script>
+    const mensajes = [
+      "🌙 Tefy, a veces la luna también se esconde… pero eso no significa que deje de brillar. Tú también sigues brillando, incluso en tus momentos más tranquilos. ✨",
+      "💫 Tefy, así como la noche llega para que el cuerpo descanse, tú también tienes permiso de soltar todo lo que pesa. Que esta luna te abrace con suavidad esta noche. 🤍",
+      "🧸 Tefy, eres como esa luna tierna que guía, que no necesita ruido para ser notada. Hoy, quiero que sepas que tu luz basta. No necesitas esforzarte por brillar. 🌙",
+      "🌌 Tefy, cada día puedes volver a empezar. Y si hoy no fue perfecto, mañana la luna te recordará que la oscuridad también es parte de la belleza. 🌷",
+      "🌠 Tefy, si el mundo se siente mucho… quédate aquí, respira, y déjate envolver por este mensaje: Eres amor, calma y una luna dulce para quien te conoce. 🫶",
+      "🌜 Tefy, en tus silencios también habita ternura. No necesitas ser siempre fuerte, a veces solo basta con ser. Y tú, así como eres, ya eres mágica. 🌸",
+      "🕊️ Tefy, que esta noche te regale sueños bonitos, pensamientos suaves y la certeza de que estás haciendo lo mejor que puedes. Estoy orgulloso(a) de ti. 💖",
+      "🫧 Tefy, respira profundo… como las olas suaves bajo la luna. Todo va a estar bien. A veces solo necesitas detenerte y sentir tu propia ternura. 🌊",
+      "🌟 Tefy, no hay noche tan oscura que apague la luz que llevas dentro. Si nadie te lo dijo hoy: tú importas, muchísimo. 💕",
+      "🍃 Tefy, eres ese tipo de persona que transforma un silencio en calma. Gracias por existir así, tal y como eres. 🌙",
+      "🫶 Tefy, cuando todo se sienta demasiado, recuérdate: está bien descansar, llorar, respirar. Eso también es valentía. 🌛",
+      "🌒 Tefy, la luna no se apura por brillar, y tú tampoco necesitas correr para ser especial. Eres suficiente, incluso en pausa. 🤲",
+      "💗 Tefy, eres ternura que camina, luz que acompaña, y abrazo que alivia. Hoy, regálate un pensamiento bonito, como tú. 🐚",
+      "🌾 Tefy, hasta las noches más frías terminan en amanecer. Si hoy cuesta, abrígate con esta idea: eres luz en proceso. 🔅",
+      "📖 Tefy, si tu corazón escribe un capítulo difícil hoy, que sepas que tu historia sigue llena de belleza y esperanza. 🌷"
+    ];
+
+    let mensajeActual = (new Date().getDate() - 1) % mensajes.length;
+    let mensaje = mensajes[mensajeActual];
+    const span = document.getElementById("mensaje");
+    let index = 0;
+
+    function escribir() {
+      if (index < mensaje.length) {
+        span.textContent += mensaje.charAt(index);
+        index++;
+        setTimeout(escribir, 50);
+      }
+    }
+
+    document.getElementById("leerMensaje").addEventListener("click", () => {
+      mensajeActual = (mensajeActual + 1) % mensajes.length;
+      mensaje = mensajes[mensajeActual];
+      index = 0;
+      span.textContent = "";
+      escribir();
+    });
+
+    document.getElementById("musicaToggle").addEventListener("click", () => {
+      const musica = document.getElementById('musica');
+      if (musica.paused) {
+        musica.play();
+        document.getElementById("musicaToggle").textContent = "🔊";
+      } else {
+        musica.pause();
+        document.getElementById("musicaToggle").textContent = "🔇";
+      }
+    });
+
+    function crearEstrellas() {
+      const contenedor = document.getElementById("estrellas");
+      for (let i = 0; i < 100; i++) {
+        const estrella = document.createElement("div");
+        estrella.classList.add("estrella");
+        estrella.style.top = `${Math.random() * 100}%`;
+        estrella.style.left = `${Math.random() * 100}%`;
+        estrella.style.animationDelay = `${Math.random() * 3}s`;
+        contenedor.appendChild(estrella);
+      }
+    }
+
+    window.onload = () => {
+      escribir();
+      crearEstrellas();
+      const musica = document.getElementById('musica');
+      document.body.addEventListener('click', () => {
+        if (musica.paused) musica.play();
+      });
+    };
+  </script>
+</body>
+</html>
